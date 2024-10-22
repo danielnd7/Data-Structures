@@ -65,7 +65,7 @@ public class ArrayStack<T> extends AbstractStack<T> implements Stack<T> {
      * @return an empty ArrayStack.
      */
     public static <T> ArrayStack<T> empty() {
-        return new ArrayStack<>(DEFAULT_INITIAL_CAPACITY);
+        return new ArrayStack<>();
     }
 
     /**
