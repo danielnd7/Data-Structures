@@ -156,9 +156,10 @@ public class ArrayStack<T> extends AbstractStack<T> implements Stack<T> {
         }
 
         // recover the original ArrayStack
-        for (int i = 0; i < that.size(); i++) {
+        for (int i = 0; i < copy.size(); i++) {
             that.push(copy.elements[i]);
         }
+
         return copy;
     }
 
