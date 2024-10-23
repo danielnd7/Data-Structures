@@ -23,14 +23,14 @@ public class QueueDemo {
     System.out.println(q1);
     System.out.println();
 
-    Queue<Integer> q2 = ArrayQueue.empty();
+    Queue<Integer> q2 = LinkedQueue.empty(); // ArrayQueue.empty();
     q2.enqueue(1);
     q2.enqueue(2);
     q2.enqueue(3);
     System.out.println(q2);
     System.out.println();
 
-    Queue<Integer> q3 = ArrayQueue.of(1, 2, 3);
+    Queue<Integer> q3 = LinkedQueue.of(1, 2, 3);  // ArrayQueue
     System.out.println(q3);
     System.out.println();
 
@@ -39,7 +39,7 @@ public class QueueDemo {
     System.out.println(q2.equals(q3));
     System.out.println();
 
-    Queue<Integer> q4 = ArrayQueue.from(Range.inclusive(0, 10, 2));
+    Queue<Integer> q4 = LinkedQueue.from(Range.inclusive(0, 10, 2)); // ArrayQueue
     System.out.println(q4);
   }
 }
