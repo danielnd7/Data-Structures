@@ -135,8 +135,7 @@ public class LinkedQueue<T> extends AbstractQueue<T> implements Queue<T> {
             that.enqueue(current.element);
             current = current.next;
         }
-
-        throw new UnsupportedOperationException("Not implemented yet");
+        return copy;
     }
 
     /**
