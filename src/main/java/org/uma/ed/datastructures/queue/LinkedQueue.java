@@ -182,7 +182,7 @@ public class LinkedQueue<T> extends AbstractQueue<T> implements Queue<T> {
     @Override
     public T first() {
         if (isEmpty()) {
-            throw new UnsupportedOperationException("An empty list");
+            throw new EmptyQueueException("first on empty queue");
         }
         return first.element;
     }
@@ -196,7 +196,7 @@ public class LinkedQueue<T> extends AbstractQueue<T> implements Queue<T> {
     @Override
     public void dequeue() {
         if (isEmpty()) {
-            throw new UnsupportedOperationException("An empty list");
+            throw new EmptyQueueException("dequeue on empty queue");
         }
         first = first.next;
         size--;
