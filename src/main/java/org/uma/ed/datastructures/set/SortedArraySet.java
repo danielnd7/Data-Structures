@@ -174,7 +174,12 @@ public class SortedArraySet<T> extends AbstractSortedSet<T> implements SortedSet
      * @return a new SortedArraySet with same elements and order as {@code that}.
      */
     public static <T> SortedArraySet<T> copyOf(SortedSet<T> that) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        SortedArraySet<T> copy = SortedArraySet.withCapacity(that.comparator(), that.size());
+
+        for (T element : that){
+            copy.append(element);
+        }
+        return copy;
     }
 
     /**
@@ -317,7 +322,7 @@ public class SortedArraySet<T> extends AbstractSortedSet<T> implements SortedSet
     @Override
     public T minimum() {
          if(isEmpty()){
-           throw new NoSuchElementException("There is no minimum");
+           throw new NoSuchElementException("minimum on empty set");
          }
          return elements[0]; // O(1)
     }
@@ -329,7 +334,7 @@ public class SortedArraySet<T> extends AbstractSortedSet<T> implements SortedSet
     @Override
     public T maximum() {
       if(isEmpty()){
-        throw new NoSuchElementException("There is no maximum");
+        throw new NoSuchElementException("maximum on empty set");
       }
       return elements[size - 1]; // O(1)
     }
@@ -423,7 +428,43 @@ public class SortedArraySet<T> extends AbstractSortedSet<T> implements SortedSet
         }
         Comparator<T> comparator = sortedSet1.comparator();
 
-        throw new UnsupportedOperationException("Not implemented yet");
+        SortedArraySet<T> unionSet = empty(comparator);
+
+        Iterator<T> iterator1 = sortedSet1.iterator();
+        Iterator<T> iterator2 = sortedSet2.iterator();
+
+        T elem1 = nextOrNull(iterator1);
+        T elem2 = nextOrNull(iterator2);
+
+        while (elem1 != null && elem2 != null) {
+            int comp = comparator.compare(elem1, elem2);
+
+            if (comp == 0){
+                unionSet.append(elem1);
+                elem1 = nextOrNull(iterator1);
+                elem2 = nextOrNull(iterator2);
+
+            } else if (comp < 0){ // elem1 < elem2
+                unionSet.append(elem1);
+                elem1 = nextOrNull(iterator1);
+
+            } else { // elem2 > elem1
+                unionSet.append(elem2);
+                elem2 = nextOrNull(iterator2);
+            }
+        }
+
+        while (elem1 != null){
+            unionSet.append(elem1);
+            elem1 = nextOrNull(iterator1);
+        }
+        while (elem2 != null){
+            unionSet.append(elem2);
+            elem2 = nextOrNull(iterator2);
+        }
+
+
+        return unionSet;
     }
 
     /**
@@ -491,6 +532,35 @@ public class SortedArraySet<T> extends AbstractSortedSet<T> implements SortedSet
         }
         Comparator<T> comparator = sortedSet1.comparator();
 
-        throw new UnsupportedOperationException("Not implemented yet");
+        SortedArraySet<T> resultSet = empty(comparator);
+
+        Iterator<T> iterator1 = sortedSet1.iterator();
+        Iterator<T> iterator2 = sortedSet2.iterator();
+
+        T elem1 = nextOrNull(iterator1);
+        T elem2 = nextOrNull(iterator2);
+
+        while (elem1 != null && elem2 != null){
+            int comp = comparator.compare(elem1, elem2);
+
+            if (comp > 0){ // elem1 > elem2
+                elem2 = nextOrNull(iterator2);
+
+            } else if(comp < 0){ // elem1 < elem2
+                resultSet.append(elem1);
+                elem1 = nextOrNull(iterator1);
+
+            } else { // elem1 = elem2
+                elem1 = nextOrNull(iterator1);
+                elem2 = nextOrNull(iterator2);
+            }
+        }
+
+        while (elem1 != null){
+            resultSet.append(elem1);
+            elem1 = nextOrNull(iterator1);
+        }
+
+        return resultSet;
     }
 }
