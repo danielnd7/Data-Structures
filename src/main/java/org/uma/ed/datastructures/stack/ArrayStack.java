@@ -211,7 +211,7 @@ public class ArrayStack<T> extends AbstractStack<T> implements Stack<T> {
     @Override
     public T top() {
         if (isEmpty()){
-            throw new UnsupportedOperationException("The ArrayStack is empty");
+            throw new EmptyStackException("top on empty stack");
         }
         return elements[size - 1];
     }
@@ -225,7 +225,7 @@ public class ArrayStack<T> extends AbstractStack<T> implements Stack<T> {
     @Override
     public void pop() {
         if (isEmpty()){
-            throw new UnsupportedOperationException("The ArrayStack is empty");
+            throw new EmptyStackException("pop on empty stack");
         }
         size--;
         elements[size] = null;
