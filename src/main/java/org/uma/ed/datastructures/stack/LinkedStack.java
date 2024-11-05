@@ -185,7 +185,7 @@ public class LinkedStack<T> extends AbstractStack<T> implements Stack<T> {
     @Override
     public T top() {
         if (isEmpty()) {
-            throw new UnsupportedOperationException("Not implemented yet");
+            throw new UnsupportedOperationException("The stack is empty");
         }
         return top.element;
     }
