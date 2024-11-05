@@ -234,7 +234,7 @@ public class ArrayQueue<T> extends AbstractQueue<T> implements Queue<T> {
     @Override
     public T first() {
         if (isEmpty()) {
-            throw new UnsupportedOperationException("The queue is empty");
+            throw new EmptyQueueException("first on empty queue");
         }
         return elements[first];
     }
@@ -248,7 +248,7 @@ public class ArrayQueue<T> extends AbstractQueue<T> implements Queue<T> {
     @Override
     public void dequeue() {
         if (isEmpty()) {
-            throw new UnsupportedOperationException("The queue is empty");
+            throw new EmptyQueueException("dequeue on empty queue");
         }
         elements[first] = null;
         first = advance(first);
