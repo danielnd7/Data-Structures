@@ -12,8 +12,12 @@ public class TreeDemo {
   public static void main(String[] args) {
     Node<Integer> tree = Node.of(1, Node.of(2, Node.of(3)), Node.of(4), Node.of(5, Node.of(6), Node.of(7), Node.of(8)));
 
-    System.out.println("The height of the tree is: " + Tree.height(tree)); // 3
     System.out.println("The size of the tree is: " + Tree.size(tree)); // 8
+
+
+    System.out.println("The height of the tree is: " + Tree.height(tree)); // 3
+
+
     System.out.println("The sum of the tree is: " + Tree.sum(tree)); // 36
     System.out.println("The maximum element in the tree is: " + Tree.maximum(tree, Integer::compareTo)); // 8
     System.out.println("The element 7 is " + Tree.count(tree, 7) + " times in the tree"); // 1
