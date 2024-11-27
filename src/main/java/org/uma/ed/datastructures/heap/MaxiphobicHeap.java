@@ -92,7 +92,7 @@ public class MaxiphobicHeap<T> implements Heap<T> {
      * @return skew heap with elements in nodes
      */
     private static <T> MaxiphobicHeap<T> merge(Comparator<T> comparator, ArrayList<Node<T>> nodes) {
-
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     /**
@@ -224,6 +224,8 @@ public class MaxiphobicHeap<T> implements Heap<T> {
      */
     private Node<T> merge(Node<T> node1, Node<T> node2) {
         // photo
+        throw new UnsupportedOperationException("Not implemented yet");
+
 
     }
 

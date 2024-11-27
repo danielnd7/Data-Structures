@@ -112,7 +112,21 @@ public class LinkedList<T> extends AbstractList<T> implements List<T> {
      * @return a new LinkedList with same elements and order as {@code that}.
      */
     public static <T> LinkedList<T> copyOf(List<T> that) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        LinkedList<T> list = new LinkedList<>();
+
+        if (!that.isEmpty()){
+            list.first = new Node<>(that.get(0), null);
+            list.last = list.first;
+
+            for (int i = 1; i < that.size(); i++) {
+                list.last.next = new Node<>(that.get(i), null);
+                list.last = list.last.next;
+
+            }
+        }
+
+        list.size = that.size();
+        return list;
     }
 
     /**
@@ -130,7 +144,7 @@ public class LinkedList<T> extends AbstractList<T> implements List<T> {
      */
     @Override
     public int size() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return size;
     }
 
     /**
@@ -247,7 +261,28 @@ public class LinkedList<T> extends AbstractList<T> implements List<T> {
      */
     @Override
     public void delete(int index) { // homework
-        throw new UnsupportedOperationException("Not implemented yet");
+        validateIndex(index);
+        Node<T> previous = first;
+        Node<T> current = first;
+
+        for (int i = 0; i < index; i++) {
+            previous = current;
+            current = current.next;
+        }
+
+        if (index == 0){ // first node
+            first = first.next;
+            if (size == 1){
+                last = null;
+            }
+        } else {
+            previous.next = current.next;
+
+            if(current.next == null) { // last node
+                last = previous;
+            }
+        }
+        size--;
     }
 
     /**

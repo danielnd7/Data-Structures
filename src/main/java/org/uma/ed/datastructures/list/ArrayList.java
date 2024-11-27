@@ -129,7 +129,18 @@ public class ArrayList<T> extends AbstractList<T> implements List<T> {
      * @return a new ArrayList with same elements and order as {@code that}.
      */
     public static <T> ArrayList<T> copyOf(ArrayList<T> that) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        ArrayList<T> list;
+        if (that.size == 0){
+           list = ArrayList.empty();
+        } else {
+           list = ArrayList.withCapacity(that.size());
+        }
+
+        for (int i = 0; i < that.size(); i++) {
+            list.elements[i] = that.elements[i];
+        }
+        list.size = that.size();
+        return list;
     }
 
     /**
@@ -140,7 +151,19 @@ public class ArrayList<T> extends AbstractList<T> implements List<T> {
      * @return a new ArrayList with same elements and order as {@code that}.
      */
     public static <T> ArrayList<T> copyOf(List<T> that) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        ArrayList<T> list;
+        if (that.size() == 0){
+            list = ArrayList.empty();
+        } else {
+            list = ArrayList.withCapacity(that.size());
+        }
+
+
+        for (int i = 0; i < that.size(); i++) {
+            list.elements[i] = that.get(i);
+        }
+        list.size = that.size();
+        return list;
     }
 
     /**
@@ -241,13 +264,16 @@ public class ArrayList<T> extends AbstractList<T> implements List<T> {
      */
     @Override
     public void insert(int index, T element) {
+        ensureCapacity();
         if (index != size){
             validateIndex(index);
             for (int i = size; i > index; i--) {
                 elements[i] = elements[i - 1];
             }
+        } else {
+            index = size;
         }
-        elements[size] = element;
+        elements[index] = element;
         size++;
     }
 
@@ -258,8 +284,13 @@ public class ArrayList<T> extends AbstractList<T> implements List<T> {
      * @throws ListException {@inheritDoc}
      */
     @Override
-    public void delete(int index) { //HW
-        throw new UnsupportedOperationException("Not implemented yet");
+    public void delete(int index) {
+        validateIndex(index);
+        for (int i = index; i < size - 1; i++) {
+            elements[i] = elements[i+1];
+        }
+        size--;
+        elements[size] = null;
     }
 
     /**
