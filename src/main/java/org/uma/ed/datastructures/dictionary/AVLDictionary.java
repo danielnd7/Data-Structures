@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.uma.ed.datastructures.searchtree.AVL;
+import org.uma.ed.datastructures.searchtree.EmptySearchTreeException;
 import org.uma.ed.datastructures.searchtree.SearchTree;
 
 /**
@@ -123,8 +124,8 @@ public class AVLDictionary<K, V> extends AbstractSortedDictionary<K, V> implemen
    *
    * @return a new AVLDictionary with same elements as {@code that}.
    */
-  public static <K, V> AVLDictionary<K, V> copyOf(AVLDictionary<K, V> that) {
-    throw new UnsupportedOperationException("Not implemented yet");
+  public static <K, V> AVLDictionary<K, V> copyOf(AVLDictionary<K, V> that) { // ??????
+    return new AVLDictionary<>(that.comparator, that.avlTree);
   }
 
   /**
@@ -135,8 +136,8 @@ public class AVLDictionary<K, V> extends AbstractSortedDictionary<K, V> implemen
    *
    * @return a new AVLDictionary with same elements as {@code that}.
    */
-  public static <K, V> AVLDictionary<K, V> copyOf(SortedDictionary<K, V> that) {
-    throw new UnsupportedOperationException("Not implemented yet");
+  public static <K, V> AVLDictionary<K, V> copyOf(SortedDictionary<K, V> that) { // ??????
+    return AVLDictionary.from(that.comparator(), that);
   }
 
   /**
@@ -145,7 +146,7 @@ public class AVLDictionary<K, V> extends AbstractSortedDictionary<K, V> implemen
    */
   @Override
   public boolean isEmpty() {
-    throw new UnsupportedOperationException("Not implemented yet");
+      return avlTree.isEmpty();
   }
 
   /**
@@ -154,7 +155,7 @@ public class AVLDictionary<K, V> extends AbstractSortedDictionary<K, V> implemen
    */
   @Override
   public int size() {
-    throw new UnsupportedOperationException("Not implemented yet");
+      return avlTree.size();
   }
 
   /**
@@ -163,7 +164,7 @@ public class AVLDictionary<K, V> extends AbstractSortedDictionary<K, V> implemen
    */
   @Override
   public Comparator<K> comparator() {
-    throw new UnsupportedOperationException("Not implemented yet");
+    return comparator;
   }
 
   /**
@@ -172,7 +173,7 @@ public class AVLDictionary<K, V> extends AbstractSortedDictionary<K, V> implemen
    */
   @Override
   public void insert(Entry<K, V> entry) {
-    throw new UnsupportedOperationException("Not implemented yet");
+    avlTree.insert(entry);
   }
 
   /**
@@ -181,7 +182,7 @@ public class AVLDictionary<K, V> extends AbstractSortedDictionary<K, V> implemen
    */
   @Override
   public V valueOf(K key) {
-    throw new UnsupportedOperationException("Not implemented yet");
+    return avlTree.search(new Entry<K,V>(key, null)) == null ? null : avlTree.search(new Entry<K,V>(key, null)).value();
   }
 
   /**
@@ -190,7 +191,7 @@ public class AVLDictionary<K, V> extends AbstractSortedDictionary<K, V> implemen
    */
   @Override
   public boolean isDefinedAt(K key) {
-    throw new UnsupportedOperationException("Not implemented yet");
+    return avlTree.search(Entry.withKey(key)) != null;
   }
 
   /**
@@ -199,7 +200,7 @@ public class AVLDictionary<K, V> extends AbstractSortedDictionary<K, V> implemen
    */
   @Override
   public void delete(K key) {
-    throw new UnsupportedOperationException("Not implemented yet");
+    avlTree.delete(new Entry<>(key, null));
   }
 
   /**
@@ -208,7 +209,7 @@ public class AVLDictionary<K, V> extends AbstractSortedDictionary<K, V> implemen
    */
   @Override
   public void clear() {
-    throw new UnsupportedOperationException("Not implemented yet");
+    avlTree.clear();
   }
 
   /**
@@ -217,7 +218,11 @@ public class AVLDictionary<K, V> extends AbstractSortedDictionary<K, V> implemen
    */
   @Override
   public Entry<K, V> minimum() {
-    throw new UnsupportedOperationException("Not implemented yet");
+    try {
+      return avlTree.minimum();
+    } catch (EmptySearchTreeException exception){
+      throw new NoSuchElementException("...");
+    }
   }
 
   /**
