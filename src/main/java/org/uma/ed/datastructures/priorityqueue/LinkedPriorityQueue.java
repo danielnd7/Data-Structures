@@ -137,10 +137,10 @@ public class LinkedPriorityQueue<T> extends AbstractPriorityQueue<T> implements 
             first = new Node<>(element, first);
         } else {
             Node<T> current = first;
-            while ((current.next != null) && (comparator.compare(element, current.next.element) > 0)){
-               current = current.next;
+            while ((current.next != null) && (comparator.compare(current.next.element, element) < 0)){
+                current = current.next;
             }
-            current.next = new Node<>(element, current.next); // insertion after the current
+            current.next = new Node<>(element, current.next); // also works for the last element
         }
 
         size++;
