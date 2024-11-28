@@ -7,6 +7,8 @@ This library contains the implementation of the data structures used in the Data
 ArrayQueue
 
 LinkedQueue
+
+LinkedPriorityQueue
 ## Set:
 SortedArraySet
 
@@ -19,4 +21,5 @@ LinkedStack
 ArrayList
 
 LinkedList
-
+## Dictionary:
+SortedLinkedDictionary
