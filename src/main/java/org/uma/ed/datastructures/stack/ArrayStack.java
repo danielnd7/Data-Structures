@@ -237,7 +237,9 @@ public class ArrayStack<T> extends AbstractStack<T> implements Stack<T> {
      */
     @Override
     public void clear() {
-        elements = null;
+        for (int i = 0; i < size; i++) {
+            elements[i] = null;
+        }
         size = 0;
     }
 
