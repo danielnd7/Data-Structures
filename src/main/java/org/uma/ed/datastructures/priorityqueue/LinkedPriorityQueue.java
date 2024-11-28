@@ -90,7 +90,7 @@ public class LinkedPriorityQueue<T> extends AbstractPriorityQueue<T> implements 
         return new LinkedPriorityQueue<>(queue.comparator, copyOf(queue.first), queue.size);
     }
 
-    private static <T> Node<T> copyOf(Node<T> node) {
+    private static <T> Node<T> copyOf(Node<T> node) { // IMPORTANT
         if (node == null) {
             return null;
         } else {
@@ -133,8 +133,10 @@ public class LinkedPriorityQueue<T> extends AbstractPriorityQueue<T> implements 
     public void enqueue(T element) {
         if (isEmpty()){
             first = new Node<>(element, null);
+
         } else if (comparator.compare(element, first.element) < 0){ // insert before the first element
             first = new Node<>(element, first);
+
         } else {
             Node<T> current = first;
             while ((current.next != null) && (comparator.compare(current.next.element, element) < 0)){
