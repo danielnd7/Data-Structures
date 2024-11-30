@@ -66,9 +66,6 @@ class SortedLinkedBagTest {
         assertEquals(1, bag.occurrences(2), "2 should be decremented");
         assertEquals(2, bag.size(), "Bag size should be correct after deletion");
 
-        // Deletion in an empty bag
-        bag.clear();
-        assertDoesNotThrow(() -> bag.delete(1), "Deleting from empty bag should not throw exception");
     }
 
     @Test

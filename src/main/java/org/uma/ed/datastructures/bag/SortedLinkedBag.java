@@ -254,9 +254,13 @@ public class SortedLinkedBag<T> extends AbstractSortedBag<T> implements SortedBa
      */
     @Override
     public void delete(T element) {
+        if (isEmpty()){
+            throw new NoSuchElementException("delete on empty bag");
+        }
         Finder finder = new Finder(element);
         if (finder.found) {
             finder.current.occurrences--;
+            size--;
         }
         if (finder.current.occurrences == 0) {
             if (finder.previous == null) { // deletion of the first element
@@ -445,12 +449,42 @@ public class SortedLinkedBag<T> extends AbstractSortedBag<T> implements SortedBa
         this.size = intersection.size;
     }
 
-    public void difference(Bag<T> bag) {
-        throw new UnsupportedOperationException("Not implemented yet");
+    public void difference(Bag<T> bag) { // NOT SORTED
+        Iterator<T> iterator = bag.iterator();
+        while (iterator.hasNext()){
+            T element = iterator.next();
+            if (this.contains(element)){
+                for (int i = 0; i < bag.occurrences(element); i++) {
+                    this.delete(element);
+                }
+            }
+        }
     }
 
     // We use that argument iterates in order
     public void difference(SortedLinkedBag<T> that) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        Iterator<T> iterator1 = this.iterator();
+        Iterator<T> iterator2 = that.iterator();
+
+        T elem1 = iterator1.next();
+        T elem2 = iterator2.next();
+
+        while ((iterator1.hasNext()) && (iterator2.hasNext())) {
+
+            if (comparator.compare(elem1, elem2) > 0) {
+                elem2 = iterator2.next();
+            } else if (comparator.compare(elem1, elem2) < 0) {
+                elem1 = iterator1.next();
+
+            } else { // there is the same element in both bags:
+
+                for (int i = 0; i < that.occurrences(elem1); i++) {
+                    delete(elem1);
+                }
+
+                elem1 = iterator1.next();
+                elem2 = iterator2.next();
+            }
+        }
     }
 }
