@@ -23,3 +23,5 @@ ArrayList
 LinkedList
 ## Dictionary:
 SortedLinkedDictionary
+## Bag:
+SortedLinkedBag
