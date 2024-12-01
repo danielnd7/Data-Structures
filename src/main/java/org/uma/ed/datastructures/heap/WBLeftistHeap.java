@@ -77,32 +77,27 @@ public class WBLeftistHeap<T> implements Heap<T> {
      * @param <T>        type of elements
      * @return skew heap with elements in nodes
      */
-    private static <T> WBLeftistHeap<T> merge(Comparator<T> comparator, ArrayList<Node<T>> nodes) {
-        // NO IDEA HOW FUCK DOES IT WORK
+    private static <T> WBLeftistHeap<T> merge(Comparator<T> comparator, ArrayList<Node<T>> nodes) { // IMPORTANT
 
         WBLeftistHeap<T> heap = empty(comparator);
         int size = nodes.size();
 
-        if (size > 0) {
-            while (size > 1) {
-                for (int i = 0, j = 0; i < size - 1; i += 2, j++) {
+        if (size > 0){
+            while (size > 1){
+                for (int i = 0, j = 0; i < size-1; i += 2, j++) {
                     Node<T> node1 = nodes.get(i);
                     Node<T> node2 = nodes.get(i + 1);
-                    Node<T> m = heap.merge(node1, node2);
-                    nodes.set(j, m);
+                    nodes.set(j, heap.merge(node1, node2));
                 }
-                if (size % 2 == 1) { // odd number of heaps
+                if (size % 2 == 1){ // odd number of heaps
                     nodes.set(size / 2, nodes.get(size - 1));
                     size = size / 2 + 1;
                 } else {
                     size = size / 2;
                 }
-
             }
             heap.root = nodes.get(0);
         }
-
-
         return heap;
 
     }
@@ -180,7 +175,7 @@ public class WBLeftistHeap<T> implements Heap<T> {
 
     // copies a tree
     private static <T> Node<T> copyOf(Node<T> node) {
-        if (node == node) {
+        if (node == null) {
             return null;
         } else {
             return new Node<>(node.element, node.weight, copyOf(node.left), copyOf(node.right));
@@ -241,33 +236,30 @@ public class WBLeftistHeap<T> implements Heap<T> {
     /* Merges two heap trees along their right spines.
      * Returns merged heap. Reuses nodes during merge
      */
-    private Node<T> merge(Node<T> node1, Node<T> node2) {
-        if (node1 == null) {
+    private Node<T> merge(Node<T> node1, Node<T> node2) { // IMPORTANT
+        if (node1 == null){
             return node2;
-        } else if (node2 == null) {
+        } else if (node2 == null){
             return node1;
-        } else { // both children are not empty
-            if (comparator.compare(node1.element, node2.element) > 0) {
+        } else {
+            if (comparator.compare(node1.element, node2.element) > 0){ // swap h1 and h2
                 Node<T> temp = node1;
                 node1 = node2;
                 node2 = temp;
             } // node1 points to the lowest root
 
             node1.right = merge(node1.right, node2);
-            // update weight
-            node1.weight = weight(node1.left) + weight(node2.right) + 1;
 
+            node1.weight = weight(node1.left) + weight(node2.left) + 1; // update the weight
 
-            if (weight(node1.right) > weight(node1.left)) {
-                Node<T> temp = node1.right;
-                node1.right = node1.left;
-                node1.left = temp;
-            }
+            if (node1.left.weight < node1.right.weight){
+                Node<T> temp = node1.left;
+                node1.left = node1.right;
+                node1.right = temp;
+            }  // node1 is leftist
         }
-        // node1 is leftist
+
         return node1;
-
-
     }
 
     /**
