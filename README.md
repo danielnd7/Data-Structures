@@ -25,3 +25,7 @@ LinkedList
 SortedLinkedDictionary
 ## Bag:
 SortedLinkedBag
+## Heap:
+BinaryHeap
+
+WeightBiasedLeftistHeap
