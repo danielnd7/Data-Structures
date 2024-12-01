@@ -140,11 +140,13 @@ public class BinaryHeap<T> implements Heap<T> {
      * @return a binary heap with elements in sequence
      */
     @SafeVarargs
-    public static <T> BinaryHeap<T> of(Comparator<T> comparator, T... elements) { // wtf???
+    public static <T> BinaryHeap<T> of(Comparator<T> comparator, T... elements) {
         int size = elements.length;
         BinaryHeap<T> heap = BinaryHeap.withCapacity(comparator, size);
-        System.arraycopy(elements, 0, heap.elements, 0, size);
+        System.arraycopy(elements, 0, heap.elements, 0, size); // copy all the elements . NOT SORTED
         heap.size = size;
+
+        // from the last non-leaf node (size/2 - 1) to the root apply HeapifyDown
         for (int i = size / 2 - 1; i >= 0; i--) {
             heap.heapifyDown(i);
         }
@@ -220,9 +222,14 @@ public class BinaryHeap<T> implements Heap<T> {
      * @param <T>  type of elements
      * @return a binary heap with same elements and comparator as given heap
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked") // done
     public static <T> BinaryHeap<T> copyOf(BinaryHeap<T> that) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        BinaryHeap<T> copy = withCapacity(that.comparator, that.size);
+        for (int i = 0; i < copy.size; i++) {
+            copy.elements[i] = that.elements[i];
+        }
+        copy.size = that.size;
+        return copy;
     }
 
     /**
@@ -249,7 +256,7 @@ public class BinaryHeap<T> implements Heap<T> {
      */
     @Override
     public int size() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return size;
     }
 
     /**
@@ -258,7 +265,10 @@ public class BinaryHeap<T> implements Heap<T> {
      */
     @Override
     public void clear() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        for (int i = 0; i < size-1; i++) {
+            elements[i] = null;
+        }
+        size = 0;
     }
 
     /**
@@ -285,48 +295,49 @@ public class BinaryHeap<T> implements Heap<T> {
 
     // Checks if elements[index1] < elements[index2]
     private boolean lessThan(int index1, int index2) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return comparator.compare(elements[index1], elements[index2]) < 0;
     }
 
     // Swaps elements in array at positions index1 and index2
     private void swap(int index1, int index2) {
-
+        T temporal = elements[index1];
+        elements[index1] = elements[index2];
+        elements[index2] = temporal;
     }
 
     // Checks if the given index is the root of the heap
     private static boolean isRoot(int index) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return index == ROOT_INDEX;
     }
 
     // Returns the index for the parent of the node with the given index
     private static int parent(int index) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return (index - 1) / 2;
     }
 
     // Returns the index for the left child of the node with the given index
     private static int leftChild(int index) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return index * 2 + 1;
     }
 
     // Returns the index for the right child of the node with the given index
     private static int rightChild(int index) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return index * 2 + 2;
     }
 
     // Checks if the given index corresponds to a node in the heap
     private boolean isNode(int index) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return elements[index] != null;
     }
 
     // Checks if the node with the given index has a left child
     private boolean hasLeftChild(int index) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return elements[index * 2 + 1] != null;
     }
 
     // Checks if the node with the given index is a leaf node
-    // !hasLeftChild(index) => !hasRightChild(index) as tree is complete
     private boolean isLeaf(int index) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return !hasLeftChild(index); // !hasLeftChild(index) => !hasRightChild(index) as tree is complete => a leaf
     }
 
     /**
@@ -334,17 +345,16 @@ public class BinaryHeap<T> implements Heap<T> {
      *
      * @param index The index of the element to move.
      */
-    private void heapifyUp(int index) {
-        while (!isRoot(index)) {
+    private void heapifyUp(int index) { // corrected
+        while (!isRoot(index)){
             int indexParent = parent(index);
-            if (lessThan(index, indexParent)) {
+            if (lessThan(index, indexParent)){
                 swap(index, indexParent);
                 index = indexParent;
             } else {
                 break;
             }
         }
-
     }
 
     /**
@@ -366,22 +376,24 @@ public class BinaryHeap<T> implements Heap<T> {
      *
      * @param index The index of the element to move.
      */
-    private void heapifyDown(int index) { // photo
-        while (!isLeaf(index)) {
+    private void heapifyDown(int index) { // photo (corrected)
+
+        while (!isLeaf(index)){ // ensures that index NODE has a left child
+
             int indexChild = leftChild(index);
-            int indexRightChild = rightChild(index);
+            int indexRightChild = rightChild(index); // try to get right child
+
             // there are two children and the right child is less than the left child => update indexChild
-            if (isNode(indexRightChild) && lessThan(indexRightChild, indexChild)) {
+            if (lessThan(indexRightChild, indexChild) && isNode(indexRightChild)) { // there is a right child and the left one is lower
                 indexChild = indexRightChild;
             }
-            //  indexChild is the index of the minimum child
             if (lessThan(indexChild, index)){
                 swap(index, indexChild);
+                index = indexChild;
             } else {
-               break;
+                break;
             }
         }
-
     }
 
     /**
