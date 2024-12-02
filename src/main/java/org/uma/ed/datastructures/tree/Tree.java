@@ -62,18 +62,16 @@ public class Tree {
      * @return The number of nodes in the tree.
      */
     public static int size(Node<?> root) {
-        int sizeVariable;
-        if (root == null) { // empty tree
-            sizeVariable = 0;
-
+        int sizeVal;
+        if (root == null) {
+            sizeVal = 0;
         } else {
-            sizeVariable = 1; // count the root
-            for (var child : root.children) { // IMPORTANT
-                sizeVariable = sizeVariable + size(child);
+            sizeVal = 1; // the root
+            for (var child : root.children){
+                sizeVal += size(child);
             }
         }
-
-        return sizeVariable;
+        return sizeVal;
     }
 
     /**
@@ -83,22 +81,19 @@ public class Tree {
      * @return The height of the tree.
      */
     public static int height(Node<?> root) {
-        int heightValue;
-        if (root == null){ // empty tree
-            heightValue = 0;
+        int heightVal;
 
-        } else { // not empty tree
-            heightValue = 1;
-            int maximumHeight = 0;
-            for (var child : root.children) { // IMPORTANT
-                 int childrenHeight = height(child);
-                 if (childrenHeight > maximumHeight){
-                     maximumHeight = childrenHeight;
-                 }
+        if (root == null){
+            heightVal = 0;
+        } else {
+            heightVal = 1;
+            int maxHeight = 0;
+            for (var child : root.children){ // IMPORTANT
+                maxHeight = Math.max(maxHeight, height(child));
             }
-            heightValue += maximumHeight;
+            heightVal += maxHeight;
         }
-        return heightValue;
+        return heightVal;
     }
 
     /**
@@ -108,16 +103,15 @@ public class Tree {
      * @return The sum of elements in the tree.
      */
     public static int sum(Node<Integer> root) {
-        int sumValue = 0;
         if (root == null){
-            sumValue = 0;
+            return 0;
         } else {
-            sumValue = root.element;
-            for (var child : root.children) { // IMPORTANT
-                sumValue = sumValue + sum(child);
+            int sumVal = root.element;
+            for (var child : root.children){
+                sumVal += sum(child);
             }
+            return sumVal;
         }
-        return sumValue;
     }
 
     /**
@@ -129,7 +123,20 @@ public class Tree {
      * @return The maximum element in the tree according to the comparator.
      */
     public static <T> T maximum(Node<T> root, Comparator<T> comparator) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (root == null){
+            throw new NoSuchElementException("maximum on empty tree");
+        }
+
+        T max = root.element; // for a leaf it will return root.element as there are no children
+        for (Node<T> child : root.children){
+
+            T childMaxElement = maximum(child, comparator);
+
+            if (comparator.compare(childMaxElement, max) > 0){
+                max = childMaxElement;
+            }
+        }
+        return max;
     }
 
     /**
@@ -141,7 +148,20 @@ public class Tree {
      * @return The number of occurrences of the element in the tree.
      */
     public static <T> int count(Node<T> root, T element) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (root == null){ // base case
+            return 0;
+
+        } else {
+            int counter = 0;
+            if (root.element.equals(element)){
+                counter = 1;
+            }
+            for (Node<T> child : root.children){
+                counter += count(child, element);
+            }
+
+            return counter;
+        }
     }
 
     /**
@@ -167,7 +187,13 @@ public class Tree {
      * @param <T>    The type of elements in the tree.
      */
     private static <T> void leaves(Node<T> root, List<T> leaves) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (!root.children.isEmpty()){
+            for (var child : root.children){
+                leaves(child, leaves);
+            }
+        } else {
+            leaves.append(root.element);
+        }
     }
 
     /**
@@ -193,7 +219,12 @@ public class Tree {
      * @param <T>      The type of elements in the tree.
      */
     private static <T> void preorder(Node<T> root, List<T> preorder) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (root != null){
+            preorder.append(root.element);
+            for (var child : root.children){
+                preorder(child, preorder);
+            }
+        }
     }
 
     /**
@@ -219,7 +250,12 @@ public class Tree {
      * @param <T>       The type of elements in the tree.
      */
     private static <T> void postorder(Node<T> root, List<T> postorder) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (root != null){
+            for (var child : root.children){
+                postorder(child, postorder);
+            }
+            postorder.append(root.element);
+        }
     }
 
     /**
@@ -229,19 +265,25 @@ public class Tree {
      * @param <T>  The type of elements in the tree.
      * @return A list with the breadth-first traversal of the tree.
      */
-    public static <T> List<T> breadthFirst(Node<T> root) { // photo (Alena) IMPORTANT
+    public static <T> List<T> breadthFirst(Node<T> root) { // IMPORTANT
         List<T> elements = ArrayList.empty();
 
-        Queue<Node<T>> queue = ArrayQueue.empty();
+        Queue<Node<T>> queue = ArrayQueue.of(root);
+
         while (!queue.isEmpty()){
+            // extract first tree in queue
             var tree = queue.first();
             queue.dequeue();
+
+            // store the root in the traversal
+            elements.append(tree.element);
+
+            // add to the queue all the children of the dequeued element
+            for (var child : tree.children){
+                queue.enqueue(child);
+            }
         }
 
-
-
-
-
-        throw new UnsupportedOperationException("Not implemented yet");
+        return elements;
     }
 }
