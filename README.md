@@ -29,3 +29,7 @@ SortedLinkedBag
 BinaryHeap
 
 WeightBiasedLeftistHeap
+## Tree:
+Tree
+
+BinaryTree
