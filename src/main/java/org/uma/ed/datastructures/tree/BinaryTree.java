@@ -3,9 +3,10 @@ package org.uma.ed.datastructures.tree;
 import org.uma.ed.datastructures.list.ArrayList;
 import org.uma.ed.datastructures.list.List;
 import org.uma.ed.datastructures.queue.ArrayQueue;
-import org.uma.ed.datastructures.queue.Queue;
 
 import java.util.Comparator;
+import java.util.NoSuchElementException;
+import java.util.Queue;
 
 /**
  * This class defines different methods to process binary trees. A binary tree is represented by a root node. If the
@@ -110,7 +111,25 @@ public class BinaryTree {
      * @return The maximum element in the tree.
      */
     public static int maximum(Node<Integer> root, Comparator<Integer> comparator) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (root == null){
+            return Integer.MIN_VALUE;
+        } else {
+            int max = root.element;
+
+            // set the maximumChild
+            int maximumChild = maximum(root.left, comparator);
+            int rightChild = maximum(root.right, comparator);
+            if (comparator.compare(maximumChild, rightChild) < 0){
+                maximumChild = rightChild;
+            }
+
+            // compare maximumChild with the root
+            if (comparator.compare(max, maximumChild) < 0){
+                max = maximumChild;
+            }
+
+            return max;
+        }
     }
 
     /**
@@ -121,7 +140,16 @@ public class BinaryTree {
      * @return The number of times the element appears in the tree.
      */
     public static int count(Node<Integer> root, int element) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        int counter = 0;
+        if (root == null){
+            return 0;
+        } else {
+            if (root.element == element){
+                counter = 1;
+            }
+            counter = counter + count(root.left, element) + count(root.right, element);
+        }
+        return counter;
     }
 
     /**
@@ -144,7 +172,15 @@ public class BinaryTree {
      * @param <T>    The type of elements in the tree.
      */
     private static <T> void leaves(Node<T> root, List<T> leaves) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (root != null){
+            if (root.right == null && root.left == null){ // base case ( a leaf)
+                leaves.append(root.element);
+
+            } else { // general case
+                leaves(root.left, leaves);
+                leaves(root.right, leaves);
+            }
+        }
     }
 
     /**
@@ -167,7 +203,11 @@ public class BinaryTree {
      * @param <T>       The type of elements in the tree.
      */
     private static <T> void preorder(Node<T> root, List<T> traversal) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (root != null){
+            traversal.append(root.element);
+            preorder(root.left, traversal);
+            preorder(root.right, traversal);
+        }
     }
 
     /**
@@ -190,7 +230,11 @@ public class BinaryTree {
      * @param <T>       The type of elements in the tree.
      */
     private static <T> void postorder(Node<T> root, List<T> traversal) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (root != null){
+            postorder(root.left, traversal);
+            postorder(root.right, traversal);
+            traversal.append(root.element);
+        }
     }
 
     /**
@@ -213,7 +257,14 @@ public class BinaryTree {
      * @param <T>       The type of elements in the tree.
      */
     private static <T> void inorder(Node<T> root, List<T> traversal) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (root != null){
+            inorder(root.left, traversal);
+            traversal.append(root.element);
+            inorder(root.right, traversal);
+        }
+
+
+
     }
 
     /**
@@ -223,6 +274,23 @@ public class BinaryTree {
      * @return The breadth-first traversal of the tree.
      */
     public static <T> List<T> breadthFirst(Node<T> root) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        List<T> list = new ArrayList<>();
+
+        ArrayQueue<Node<T>> queue = ArrayQueue.of(root);
+
+        while (!queue.isEmpty()){
+            Node<T> node = queue.first();
+            list.append(node.element);
+            queue.dequeue();
+
+            if (node.left != null) {
+                queue.enqueue(node.left);
+            }
+            if (node.right != null) {
+                queue.enqueue(node.right);
+            }
+
+        }
+        return list;
     }
 }
