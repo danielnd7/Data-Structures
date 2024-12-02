@@ -84,7 +84,8 @@ public class BST<K> implements SearchTree<K> {
      * @param that binary search tree to be copied.
      * @return a new BST with same elements and structure as {@code that}.
      */
-    public static <K> BST<K> copyOf(SearchTree<K> that) {
+    public static <K> BST<K> copyOf(SearchTree<K> that) { // ????
+
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
@@ -99,8 +100,15 @@ public class BST<K> implements SearchTree<K> {
         return new BST<>(that.comparator, copyOf(that.root), that.size);
     }
 
-    private static <K> Node<K> copyOf(Node<K> node) {
-        throw new UnsupportedOperationException("Not implemented yet");
+    private static <K> Node<K> copyOf(Node<K> node) { // checked
+        if (node == null){
+            return null;
+        } else {
+            Node<K> nodeNew = new Node<>(node.key);
+            nodeNew.left = copyOf(node.left);
+            nodeNew.right = copyOf(node.right);
+            return nodeNew;
+        }
     }
 
     /**
@@ -163,18 +171,18 @@ public class BST<K> implements SearchTree<K> {
     }
 
     // returns modified tree
-    private Node<K> insert(Node<K> node, K key) {
+    private Node<K> insert(Node<K> node, K key) { // checked
         if (node == null){
-            size++;
             node = new Node<>(key);
+            size++;
         } else {
-            int cmp = comparator.compare(key, node.key);
-            if (cmp == 0){
-                node.key = key; // key was found
-            } else if (cmp < 0){
+            int comparison = comparator.compare(key, node.key);
+            if (comparison < 0){
                 node.left = insert(node.left, key);
-            } else {
+            } else if (comparison > 0){
                 node.right = insert(node.right, key);
+            } else {
+                node.key = key;  // key was found
             }
         }
         return node;
@@ -189,21 +197,22 @@ public class BST<K> implements SearchTree<K> {
         return search(root, key);
     }
 
-    private K search(Node<K> node, K key) {
-        if (node == null){ // empty
-            return null; // key not found
+    private K search(Node<K> node, K key) { // checked
+        K element;
+        if (node == null){ // empty bst
+            element = null;
+
         } else {
-            int cmp = comparator.compare(key, node.key);
-            if (cmp == 0){
-                return node.key; // key was found
-            } else if (cmp < 0){
-                return search(node.left, key);
+            int comparison = comparator.compare(node.key, key);
+            if (comparison == 0){
+                element = node.key; // key was found
+            } else if (comparison < 0){
+                element = search(node.right, key);
             } else {
-                return search(node.right, key);
+                element = search(node.left, key);
             }
         }
-
-
+        return element;
     }
 
     /**
@@ -226,9 +235,8 @@ public class BST<K> implements SearchTree<K> {
 
     // returns modified tree
     private Node<K> delete(Node<K> node, K key) {
-        if (node == null) {
-            // key not found; do nothing
-        } else {
+        if (node != null) { // key not found; do nothing
+
             int cmp = comparator.compare(key, node.key);
             if (cmp < 0) {
                 node.left = delete(node.left, key);
@@ -242,7 +250,7 @@ public class BST<K> implements SearchTree<K> {
     }
 
     // returns modified tree
-    private Node<K> delete(Node<K> node) {
+    private Node<K> delete(Node<K> node) { // ?????
         if (node.left == null) {
             node = node.right;
         } else if (node.right == null) {
@@ -258,7 +266,7 @@ public class BST<K> implements SearchTree<K> {
      * Precondition: node is a non-empty tree. Removes minimum key from tree rooted at node. Before deletion, key is saved
      * into temp node. Returns modified tree (without min key).
      */
-    private static <K> Node<K> split(Node<K> node, Node<K> temp) {
+    private static <K> Node<K> split(Node<K> node, Node<K> temp) { // ?????
         if (node.left == null) {
             // min node found, so copy min key
             temp.key = node.key;
@@ -275,9 +283,9 @@ public class BST<K> implements SearchTree<K> {
      * <p> Time complexity: from O(log n) to O(n)
      */
     @Override
-    public K minimum() {
+    public K minimum() { // checked
         if (isEmpty()){
-            throw new EmptySearchTreeException("minimum on empty tree");
+            throw new NoSuchElementException("minimum on empty bst");
         }
         Node<K> node = root;
         while (node.left != null){
@@ -291,7 +299,7 @@ public class BST<K> implements SearchTree<K> {
      * <p> Time complexity: from O(log n) to O(n)
      */
     @Override
-    public K maximum() {
+    public K maximum() { // checked
         if (isEmpty()){
           throw new EmptySearchTreeException("minimum on empty tree");
         }
@@ -307,21 +315,23 @@ public class BST<K> implements SearchTree<K> {
      * <p> Time complexity: from O(log n) to O(n)
      */
     @Override
-    public void deleteMinimum() {
+    public void deleteMinimum() { // checked
         if (isEmpty()){
-          throw new EmptySearchTreeException("delete on empty tree");
+            throw new NoSuchElementException("deleteMinimum on empty bst");
         }
-        Node<K> parent = null;
+
         Node<K> node = root;
+        Node<K> parent = null;
 
         while (node.left != null){
-          parent = node;
-          node = node.left;
+            parent = node;
+            node = node.left;
         }
-        if (parent == null){
-            root = root.right;
-        } else {
+
+        if (parent != null){
             parent.left = node.right;
+        } else {
+            root = root.right;
         }
         size--;
     }
@@ -331,8 +341,23 @@ public class BST<K> implements SearchTree<K> {
      * <p> Time complexity: from O(log n) to O(n)
      */
     @Override
-    public void deleteMaximum() { // HW
-        throw new UnsupportedOperationException("Not implemented yet");
+    public void deleteMaximum() { // checked
+        if (isEmpty()){
+            throw new NoSuchElementException("deleteMaximum on empty bst");
+        }
+        Node<K> node = root;
+        Node<K> parent = null;
+
+        while (node.right != null){
+            parent = node;
+            node = node.right;
+        }
+        if (parent != null){
+            parent.right = node.left;
+        } else {
+            root = root.left;
+        }
+        size--;
     }
 
     /**
@@ -487,7 +512,6 @@ public class BST<K> implements SearchTree<K> {
         StringBuilder sb = new StringBuilder(className).append("(");
         toString(sb, root);
         sb.append(")");
-
         return sb.toString();
     }
 
