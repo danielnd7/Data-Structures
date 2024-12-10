@@ -67,7 +67,7 @@ public class Tree {
             sizeVal = 0;
         } else {
             sizeVal = 1; // the root
-            for (var child : root.children){
+            for (var child : root.children) {
                 sizeVal += size(child);
             }
         }
@@ -83,12 +83,12 @@ public class Tree {
     public static int height(Node<?> root) {
         int heightVal;
 
-        if (root == null){
+        if (root == null) {
             heightVal = 0;
         } else {
             heightVal = 1;
             int maxHeight = 0;
-            for (var child : root.children){ // IMPORTANT
+            for (var child : root.children) { // IMPORTANT
                 maxHeight = Math.max(maxHeight, height(child));
             }
             heightVal += maxHeight;
@@ -103,11 +103,11 @@ public class Tree {
      * @return The sum of elements in the tree.
      */
     public static int sum(Node<Integer> root) {
-        if (root == null){
+        if (root == null) {
             return 0;
         } else {
             int sumVal = root.element;
-            for (var child : root.children){
+            for (var child : root.children) {
                 sumVal += sum(child);
             }
             return sumVal;
@@ -123,16 +123,16 @@ public class Tree {
      * @return The maximum element in the tree according to the comparator.
      */
     public static <T> T maximum(Node<T> root, Comparator<T> comparator) {
-        if (root == null){
+        if (root == null) {
             throw new NoSuchElementException("maximum on empty tree");
         }
 
         T max = root.element; // for a leaf it will return root.element as there are no children
-        for (Node<T> child : root.children){
+        for (Node<T> child : root.children) {
 
             T childMaxElement = maximum(child, comparator);
 
-            if (comparator.compare(childMaxElement, max) > 0){
+            if (comparator.compare(childMaxElement, max) > 0) {
                 max = childMaxElement;
             }
         }
@@ -148,15 +148,15 @@ public class Tree {
      * @return The number of occurrences of the element in the tree.
      */
     public static <T> int count(Node<T> root, T element) {
-        if (root == null){ // base case
+        if (root == null) { // base case
             return 0;
 
         } else {
             int counter = 0;
-            if (root.element.equals(element)){
+            if (root.element.equals(element)) {
                 counter = 1;
             }
-            for (Node<T> child : root.children){
+            for (Node<T> child : root.children) {
                 counter += count(child, element);
             }
 
@@ -187,8 +187,8 @@ public class Tree {
      * @param <T>    The type of elements in the tree.
      */
     private static <T> void leaves(Node<T> root, List<T> leaves) {
-        if (!root.children.isEmpty()){
-            for (var child : root.children){
+        if (!root.children.isEmpty()) {
+            for (var child : root.children) {
                 leaves(child, leaves);
             }
         } else {
@@ -219,9 +219,9 @@ public class Tree {
      * @param <T>      The type of elements in the tree.
      */
     private static <T> void preorder(Node<T> root, List<T> preorder) {
-        if (root != null){
+        if (root != null) {
             preorder.append(root.element);
-            for (var child : root.children){
+            for (var child : root.children) {
                 preorder(child, preorder);
             }
         }
@@ -250,8 +250,8 @@ public class Tree {
      * @param <T>       The type of elements in the tree.
      */
     private static <T> void postorder(Node<T> root, List<T> postorder) {
-        if (root != null){
-            for (var child : root.children){
+        if (root != null) {
+            for (var child : root.children) {
                 postorder(child, postorder);
             }
             postorder.append(root.element);
@@ -270,7 +270,7 @@ public class Tree {
 
         Queue<Node<T>> queue = ArrayQueue.of(root);
 
-        while (!queue.isEmpty()){
+        while (!queue.isEmpty()) {
             // extract first tree in queue
             var tree = queue.first();
             queue.dequeue();
@@ -279,7 +279,7 @@ public class Tree {
             elements.append(tree.element);
 
             // add to the queue all the children of the dequeued element
-            for (var child : tree.children){
+            for (var child : tree.children) {
                 queue.enqueue(child);
             }
         }
