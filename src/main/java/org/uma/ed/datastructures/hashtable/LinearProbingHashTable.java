@@ -82,8 +82,18 @@ public class LinearProbingHashTable<K> implements HashTable<K> {
      * @param that LinearProbingHashTable to be copied.
      * @return a new LinearProbingHashTable with same elements as {@code that}.
      */
-    public static <K> LinearProbingHashTable<K> copyOf(LinearProbingHashTable<K> that) {
-        throw new UnsupportedOperationException("Not implemented yet");
+    public static <K> LinearProbingHashTable<K> copyOf(LinearProbingHashTable<K> that) { // done
+        LinearProbingHashTable<K> newTable = new LinearProbingHashTable<>(that.keys.length, that.maxLoadFactor);
+
+        for (K key : that) {
+            if (key != null){
+                int newIndex = newTable.searchIndex(key);
+                newTable.keys[newIndex] = key;
+            }
+        }
+        newTable.size = that.size;
+
+        return newTable;
     }
 
     /**
@@ -93,8 +103,18 @@ public class LinearProbingHashTable<K> implements HashTable<K> {
      * @param that HashTable to be copied.
      * @return a new LinearProbingHashTable with same elements as {@code that}.
      */
-    public static <K> LinearProbingHashTable<K> copyOf(HashTable<K> that) {
-        throw new UnsupportedOperationException("Not implemented yet");
+    public static <K> LinearProbingHashTable<K> copyOf(HashTable<K> that) { // done
+        LinearProbingHashTable<K> newTable = withCapacity(that.size());
+
+        for (K key : that) {
+            if (key != null){
+                int newIndex = newTable.searchIndex(key);
+                newTable.keys[newIndex] = key;
+                newTable.size++;
+            }
+        }
+
+        return newTable;
     }
 
     /**
@@ -103,7 +123,7 @@ public class LinearProbingHashTable<K> implements HashTable<K> {
      */
     @Override
     public boolean isEmpty() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return size == 0;
     }
 
     /**
@@ -112,7 +132,7 @@ public class LinearProbingHashTable<K> implements HashTable<K> {
      */
     @Override
     public int size() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return size;
     }
 
     // hash function for keys
@@ -145,16 +165,15 @@ public class LinearProbingHashTable<K> implements HashTable<K> {
      * <p> Time complexity: near O(1)
      */
     @Override
-    public void insert(K key) {
-        if (loadFactor() > maxLoadFactor){
+    public void insert(K key) { // done
+        if (loadFactor() > maxLoadFactor) {
             rehashing();
         }
         int index = searchIndex(key);
-        if (keys[index] == null){ // key is already in the table
-           size++;
+        if (keys[index] == null){ // case of adding a new key (otherwise it will be overridden)
+            size++;
         }
-        keys[index] = key; // insertion
-
+        keys[index] = key;
     }
 
     /**
@@ -165,7 +184,6 @@ public class LinearProbingHashTable<K> implements HashTable<K> {
     public K search(K key) {
         int index = searchIndex(key);
         return keys[index];
-
     }
 
     /**
@@ -182,16 +200,16 @@ public class LinearProbingHashTable<K> implements HashTable<K> {
      * <p> Time complexity: near O(1)
      */
     @Override
-    public void delete(K key) {
+    public void delete(K key) { // done
         int index = searchIndex(key);
 
-        if (keys[index] != null){ // key was found (deletion)
+        if (keys[index] != null) { // the key is in the table
             keys[index] = null;
             size--;
 
             index = advance(index);
 
-            while (keys[index] != null){ // reinsert all the elements of the cluster
+            while (keys[index] != null) { // traversing all the elements in the cluster after the removed one
                 K oldKey = keys[index];
                 keys[index] = null;
 
@@ -201,8 +219,6 @@ public class LinearProbingHashTable<K> implements HashTable<K> {
                 index = advance(index);
             }
         }
-
-
     }
 
     /**
@@ -210,25 +226,26 @@ public class LinearProbingHashTable<K> implements HashTable<K> {
      * <p> Time complexity: near O(n)
      */
     @Override
-    public void clear() {
-        throw new UnsupportedOperationException("Not implemented yet");
+    public void clear() { // done
+        for (int i = 0; i < keys.length; i++) {
+            keys[i] = null;
+        }
+        size = 0;
     }
 
     @SuppressWarnings("unchecked")
-    private void rehashing() {
-        // compute new table size
+    private void rehashing() {  // done
+        // size is unchanged during rehashing
         int newCapacity = HashPrimes.primeDoubleThan(keys.length);
 
         K[] oldKeys = keys;
 
-        // allocate new table
-        keys = (K[]) new Object[newCapacity];
+        keys = (K[]) new Object[newCapacity]; // allocate new table
 
-        // reinsert elements in new table
-        for (K oldKey : oldKeys) {
-            if (oldKey != null) {
-                int newIndex = searchIndex(oldKey); // search for new index in new table
-                keys[newIndex] = oldKey; // insert oldKey in new table
+        for (int i = 0; i < oldKeys.length; i++) {
+            if (oldKeys[i] != null){
+                int newIndex = searchIndex(oldKeys[i]);
+                keys[newIndex] = oldKeys[i];
             }
         }
     }
