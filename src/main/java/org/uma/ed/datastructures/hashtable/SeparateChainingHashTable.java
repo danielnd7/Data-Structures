@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.uma.ed.datastructures.tree.BinaryTree;
 import org.uma.ed.datastructures.utils.toString.ToString;
 
 /**
@@ -99,7 +100,13 @@ public class SeparateChainingHashTable<K> implements HashTable<K> {
      * @return a new SeparateChainingHashTable with same elements as {@code that}.
      */
     public static <K> SeparateChainingHashTable<K> copyOf(SeparateChainingHashTable<K> that) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        SeparateChainingHashTable<K> newHashTable = withCapacity(that.size());
+
+        for (K key : that) {
+            newHashTable.insert(key);
+        }
+        return newHashTable;
+
     }
 
     /**
@@ -110,7 +117,13 @@ public class SeparateChainingHashTable<K> implements HashTable<K> {
      * @return a new SeparateChainingHashTable with same elements as {@code that}.
      */
     public static <K> SeparateChainingHashTable<K> copyOf(HashTable<K> that) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        // public interface HashTable<K> extends Iterable<K> ......
+        SeparateChainingHashTable<K> newHashTable = withCapacity(that.size());
+
+        for (K key : that) {
+            newHashTable.insert(key);
+        }
+        return newHashTable;
     }
 
     /**
@@ -119,7 +132,7 @@ public class SeparateChainingHashTable<K> implements HashTable<K> {
      */
     @Override
     public boolean isEmpty() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return size == 0;
     }
 
     /**
@@ -128,7 +141,7 @@ public class SeparateChainingHashTable<K> implements HashTable<K> {
      */
     @Override
     public int size() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return size;
     }
 
     // hash function for keys
@@ -168,19 +181,19 @@ public class SeparateChainingHashTable<K> implements HashTable<K> {
      * <p> Time complexity: near O(1)
      */
     @Override
-    public void insert(K key) {
-        if (loadFactor() > maxLoadFactor) {
+    public void insert(K key) { // done
+        if (loadFactor() > maxLoadFactor){
             rehashing();
         }
         Finder finder = new Finder(key);
 
-        if (finder.current != null){ // element was found
-            finder.current.key = key; // replacement
-        } else { // the element not in the table
-            Node<K> node = new Node<>(key, table[finder.index]); // insert at the beginning of the list
-            table[finder.index] = node;
+        if (finder.current == null) { // the key was not found in the table
+            table[finder.index] = new Node<>(key, table[finder.index]); // insert at the beginning of the list
             size++;
+        } else { // the key was found
+            finder.current.key = key; // replacement
         }
+
     }
 
     /**
@@ -188,7 +201,7 @@ public class SeparateChainingHashTable<K> implements HashTable<K> {
      * <p> Time complexity: near O(1)
      */
     @Override
-    public K search(K key) {
+    public K search(K key) {  // done
         Finder finder = new Finder(key);
         return finder.current == null ? null : finder.current.key;
     }
@@ -198,7 +211,7 @@ public class SeparateChainingHashTable<K> implements HashTable<K> {
      * <p> Time complexity: near O(1)
      */
     @Override
-    public boolean contains(K key) {
+    public boolean contains(K key) { // done
         return search(key) != null;
     }
 
@@ -207,18 +220,17 @@ public class SeparateChainingHashTable<K> implements HashTable<K> {
      * <p> Time complexity: near O(1)
      */
     @Override
-    public void delete(K key) {
+    public void delete(K key) { // done
         Finder finder = new Finder(key);
 
-        if (finder.current != null){
-            if (finder.previous == null){ // deletion of the first element in the list
-                table[finder.index] = finder.current.next;
-            } else {
+        if (finder.current != null) { // the key was found
+            if (finder.previous != null) {
                 finder.previous.next = finder.current.next;
+            } else { // the element is the first in the chain
+                table[finder.index] = finder.current.next;
             }
             size--;
         }
-
     }
 
     /**
@@ -238,6 +250,29 @@ public class SeparateChainingHashTable<K> implements HashTable<K> {
         // compute new table size
         int newCapacity = HashPrimes.primeDoubleThan(table.length);
 
+        // allocate new table
+        Node<K> [] newTable = (Node<K>[]) new Node[newCapacity];
+
+        for (Node<K> chain : table) {
+            Node<K> current = chain;
+            while (current != null){
+                int newIndex = hash(current.key);
+
+                Node<K> node = new Node<>(current.key, newTable[newIndex]);
+                newTable[newIndex] = node;
+
+                current = current.next;
+            }
+        }
+
+        table = newTable;
+
+
+        /* ANOTHER OPTION :
+
+        // compute new table size
+        int newCapacity = HashPrimes.primeDoubleThan(table.length);
+
         Node<K>[] oldTable = table;
 
         // allocate new table
@@ -254,6 +289,8 @@ public class SeparateChainingHashTable<K> implements HashTable<K> {
                 table[index] = node;
             }
         }
+
+         */
     }
 
     private final class SeparateChainingHashTableIterator implements Iterator<K> {
@@ -268,7 +305,8 @@ public class SeparateChainingHashTable<K> implements HashTable<K> {
             advance();
         }
 
-        private void advance() {
+        private void advance() { // index is increased only after the chain on each index were fully traversed
+            // while ((current == null) .... if current != null the current is already a next node in a chain
             while ((current == null) && (index < table.length - 1)) {
                 index++;
                 current = table[index];

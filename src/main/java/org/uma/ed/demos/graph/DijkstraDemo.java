@@ -44,7 +44,7 @@ public class DijkstraDemo {
     System.out.printf("Costs of shortest paths from vertex %s are:\n%s\n", source, dictionary1);
     System.out.println();
 
-    Dictionary<Character, Tuple2<Integer, List<Character>>> dictionary2 = dijkstraPaths(weightedGraph, source);
-    System.out.printf("Shortest paths from vertex %s are:\n%s\n", source, dictionary2);
+    // Dictionary<Character, Tuple2<Integer, List<Character>>> dictionary2 = dijkstraPaths(weightedGraph, source);
+    // System.out.printf("Shortest paths from vertex %s are:\n%s\n", source, dictionary2);
   }
 }
