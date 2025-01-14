@@ -61,23 +61,25 @@ public class DictionaryGraph<V> implements Graph<V> {
      * @param <V>   Type for vertices in graph.
      * @return A DictionaryGraph with same vertices and edges as given graph.
      */
-    public static <V> DictionaryGraph<V> copyOf(Graph<V> graph) {
-        throw new UnsupportedOperationException("Not implemented yet");
+    public static <V> DictionaryGraph<V> copyOf(Graph<V> graph) { // done ?
+        DictionaryGraph<V> newGraph = of(graph.vertices(), graph.edges());
+
+        return newGraph;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean isEmpty() {
-        throw new UnsupportedOperationException("Not implemented yet");
+    public boolean isEmpty() { // done
+        return vertices.isEmpty();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void addVertex(V vertex) {
+    public void addVertex(V vertex) {  // done in class
         vertices.insert(vertex);
          if (!diEdges.isDefinedAt(vertex)){
               diEdges.insert(vertex, JDKHashSet.empty());
@@ -85,7 +87,7 @@ public class DictionaryGraph<V> implements Graph<V> {
 
     }
 
-    private void addDiEdge(V source, V destination) {
+    private void addDiEdge(V source, V destination) { // done in class
         diEdges.valueOf(source).insert(destination);
     }
 
@@ -93,67 +95,100 @@ public class DictionaryGraph<V> implements Graph<V> {
      * {@inheritDoc}
      */
     @Override
-    public void addEdge(V vertex1, V vertex2) {
-        if (vertices.contains(vertex1)){
+    public void addEdge(V vertex1, V vertex2) { // done in class
+        if (!vertices.contains(vertex1)){
             throw new GraphException("first vertex is not in graph");
         }
-        if (vertices.contains(vertex2)){
-          throw new GraphException("second vertex is not in graph");
+        if (!vertices.contains(vertex2)){
+            throw new GraphException("second vertex is not in graph");
         }
         addDiEdge(vertex1, vertex2);
         addDiEdge(vertex2, vertex1);
     }
 
-    private void deleteDiEdge(V source, V destination) {
-        throw new UnsupportedOperationException("Not implemented yet");
+    private void deleteDiEdge(V source, V destination) { // done
+        diEdges.valueOf(source).delete(destination);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void deleteEdge(V vertex1, V vertex2) {
-        throw new UnsupportedOperationException("Not implemented yet");
+    public void deleteEdge(V vertex1, V vertex2) { // done
+        if (!vertices.contains(vertex1)){
+            throw new GraphException("first vertex is not in graph");
+        }
+        if (!vertices.contains(vertex2)){
+            throw new GraphException("second vertex is not in graph");
+        }
+        deleteDiEdge(vertex1, vertex2);
+        deleteDiEdge(vertex2, vertex1);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void deleteVertex(V vertex) {
-        throw new UnsupportedOperationException("Not implemented yet");
+    public void deleteVertex(V vertex) { // done
+        if (vertices.contains(vertex)) {
+
+            // delete all the appearances of the vertex so all the edges containing this vertex will be removed
+            for (Set<V> adjacentVertices : diEdges.values()) {
+                adjacentVertices.delete(vertex);
+            }
+
+            // delete the vertex from the dictionary
+            diEdges.delete(vertex);
+            vertices.delete(vertex);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Set<V> vertices() {
-        throw new UnsupportedOperationException("Not implemented yet");
+    public Set<V> vertices() { // done
+        return vertices;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Set<Edge<V>> edges() {
-        throw new UnsupportedOperationException("Not implemented yet");
+    public Set<Edge<V>> edges() { // done
+
+        Set<Edge<V>> edges = new JDKHashSet<>(); // initialization of the data structure
+
+        for (V key : diEdges.keys()) { // traverse the adjacency table
+            for (V adjacentVertex : diEdges.valueOf(key)) {
+
+                Edge<V> edge1 = new Edge<>(key, adjacentVertex);
+                Edge<V> edge2 = new Edge<>(adjacentVertex, key);
+
+                if (!edges.contains(edge1) && !edges.contains(edge2)) {
+                    // insertion is performed only if this edge does not already exist in the set (in any order)
+                    edges.insert(edge1);
+                }
+            }
+        }
+
+        return edges;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int numberOfVertices() {
-        throw new UnsupportedOperationException("Not implemented yet");
+    public int numberOfVertices() { // done
+        return vertices.size();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int numberOfEdges() {
-        throw new UnsupportedOperationException("Not implemented yet");
+    public int numberOfEdges() { // done
+        return edges().size();
     }
 
     /**
@@ -163,16 +198,17 @@ public class DictionaryGraph<V> implements Graph<V> {
      * @return Successors of a vertex.
      */
     @Override
-    public Set<V> successors(V vertex) {
-        throw new UnsupportedOperationException("Not implemented yet");
+    public Set<V> successors(V vertex) {   // done
+        // all vertices that can be reached from a given vertex by following a single edge.
+        return (vertices.contains(vertex) && diEdges.isDefinedAt(vertex))  ?  diEdges.valueOf(vertex)  :  null;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int degree(V vertex) {
-        throw new UnsupportedOperationException("Not implemented yet");
+    public int degree(V vertex) {  // done
+        return successors(vertex) == null  ?  0  :  successors(vertex).size();
     }
 
     @Override
