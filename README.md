@@ -33,3 +33,9 @@ WeightBiasedLeftistHeap
 Tree
 
 BinaryTree
+## HashTable:
+LinearProbingHashTable
+
+SeparateChainingHashTable
+## Graph:
+DictionaryGraph
