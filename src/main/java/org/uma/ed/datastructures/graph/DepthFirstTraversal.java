@@ -40,8 +40,7 @@ public class DepthFirstTraversal<V> extends Traversal<V> {
    * This class implements a LIFO (Last-In-First-Out) store that is used to keep track of the vertices that are yet to
    * be visited during the traversal. The LIFO property ensures that vertices are visited in a depth-first manner.
    */
-  private static final class LIFOStore<T> extends JDKStack<T> implements
-      Store<T> {
+  private static final class LIFOStore<T> extends JDKStack<T> implements Store<T> {
 
     /**
      * Inserts an element into the store.

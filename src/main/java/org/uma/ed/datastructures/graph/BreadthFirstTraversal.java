@@ -41,8 +41,7 @@ public class BreadthFirstTraversal<V> extends Traversal<V> {
    * be visited during the traversal. The FIFO property ensures that vertices are visited in the order of their distance
    * from the source vertex.
    */
-  private final static class FIFOStore<T> extends JDKQueue<T> implements
-      Store<T> {
+  private final static class FIFOStore<T> extends JDKQueue<T> implements Store<T> {
 
     /**
      * Inserts an element into the store.
