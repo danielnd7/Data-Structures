@@ -50,39 +50,50 @@ public class Dijkstra {
 
         Set<V> optimalVertices = JDKHashSet.of(source);
 
-        Set<V> vertices = JDKHashSet.copyOf(weightedGraph.vertices());
+        Set<V> vertices = JDKHashSet.copyOf(weightedGraph.vertices()); // remaining vertices
         vertices.delete(source);
 
-        Dictionary<V, Integer> dictionary = JDKHashDictionary.empty();
+        Dictionary<V, Integer> dictionary = JDKHashDictionary.empty(); // stores the shortest path for each vertex
         dictionary.insert(source, 0);
 
+        // Dijkstra algorithm
+        while (!vertices.isEmpty()) {
+            // 1. calculate the distance to all possible vertices using this one
+            // 2. update the shortest one
+            // 3. add that one to optimalVertices and remove from vertices
 
-        while (!vertices.isEmpty()){
-            // Create a PQ of extensions
-            PriorityQueue<Extension<V>> priorityQueue = new LinkedPriorityQueue<>(Extension::compareTo);
+            // Creation of PQ of extensions
+            PriorityQueue<Extension<V>> queue = new JDKPriorityQueue<Extension<V>>(Extension::compareTo);
 
-            // put in the PQ extensions connecting one vertex in verticesOpt to vertices in vertices
-            for (var optimalVertex : optimalVertices){
-                for (var successor : weightedGraph.successors(optimalVertex)){
+            // Find all possible extensions from vertices in optimalVertices and add them to the queue
+            for (V optimalVertex : optimalVertices) {
 
-                    V destination = successor.vertex();
-                    Integer weight = successor.weight();
+                for (var neighbour : weightedGraph.successors(optimalVertex)) {
 
-                    if (vertices.contains(destination)){
-                        priorityQueue.enqueue(Extension.of(optimalVertex, destination, dictionary.valueOf(optimalVertex) + weight));
+                    V destination = neighbour.vertex();
+                    int weight = neighbour.weight();
+
+
+                    if (vertices.contains(destination)) { // only for neighbours which are not already optimal
+
+                        // the total weight is the weight of the path to the source + the weight to the neighbour :
+                        int weightNeighbour = dictionary.valueOf(optimalVertex) + weight;
+                        queue.enqueue(Extension.of(optimalVertex, destination, weightNeighbour));
                     }
-
-                    // extract best extension
-                    var bestExtension = priorityQueue.first();
-
-                    var bestDestination = bestExtension.destination;
-                    var bestTotalCost = bestExtension.totalCost;
-
-                    dictionary.insert(bestDestination, bestTotalCost);
                 }
             }
 
+            Extension<V> bestExtension = queue.first();
+            queue.dequeue(); // optional as we create a new queue every time
+
+            V newOptimalVertex = bestExtension.destination();
+
+            dictionary.insert(newOptimalVertex, bestExtension.totalCost());
+
+            optimalVertices.insert(newOptimalVertex);
+            vertices.delete(newOptimalVertex);
         }
+
         return dictionary;
     }
 
@@ -95,14 +106,12 @@ public class Dijkstra {
      * @return a dictionary where keys are vertices and values are pairs with the minimum cost to reach them from the
      * source and the path to reach them.
      */
-    public static <V> Dictionary<V, Tuple2<Integer, List<V>>> dijkstraPaths(
-            WeightedGraph<V, Integer> weightedGraph, V source) {
+    public static <V> Dictionary<V, Tuple2<Integer, List<V>>> dijkstraPaths(WeightedGraph<V, Integer> weightedGraph, V source) {
 
         // Class for representing an extension of a path from vertex source to
         // vertex destination and total cost of reaching destination plus path from source to destination.
         // This class implements Comparable interface to allow sorting of extensions based on total cost.
-        record Extension<V>(V source, V destination, Integer totalCost,
-                            List<V> path) implements Comparable<Extension<V>> {
+        record Extension<V>(V source, V destination, Integer totalCost, List<V> path) implements Comparable<Extension<V>> {
             @Override
             // Best extension is the one with the smallest total cost.
             // Will be used later by the priority queue.
@@ -117,47 +126,63 @@ public class Dijkstra {
 
        // Initialization
 
-        /*
-
         Set<V> optimalVertices = JDKHashSet.of(source);
 
-        Set<V> vertices = JDKHashSet.copyOf(weightedGraph.vertices());
+        Set<V> vertices = JDKHashSet.copyOf(weightedGraph.vertices()); // remaining vertices
         vertices.delete(source);
 
-        Dictionary<V, Tuple2<Integer, List<V>>> dictionary = JDKHashDictionary.empty();
-        dictionary.insert(source, 0);
+        Dictionary<V, Tuple2<Integer, List<V>>> dictionary = JDKHashDictionary.empty(); // stores the shortest path for each vertex
+        dictionary.insert(source, Tuple2.of(0, JDKArrayList.of(source)));
+
+        // Dijkstra algorithm
+        while (!vertices.isEmpty()) {
+
+            // Creation of PQ of extensions
+            PriorityQueue<Extension<V>> queue = new JDKPriorityQueue<Extension<V>>(Extension::compareTo);
+
+            // Find all possible extensions from vertices in optimalVertices and add them to the queue
+            for (V optimalVertex : optimalVertices) {
+
+                for (var neighbour : weightedGraph.successors(optimalVertex)) {
+
+                    V destination = neighbour.vertex();
+                    int weight = neighbour.weight();
 
 
-        while (!vertices.isEmpty()){
-            // Create a PQ of extensions
-            PriorityQueue<Extension<V>> priorityQueue = new LinkedPriorityQueue<>(Extension::compareTo);
+                    if (vertices.contains(destination)) { // only for neighbours which are not already optimal
 
-            // put in the PQ extensions connecting one vertex in verticesOpt to vertices in vertices
-            for (var optimalVertex : optimalVertices){
-                for (var successor : weightedGraph.successors(optimalVertex)){
+                        // the total weight is the weight of the path to the source + the weight to the neighbour :
+                        int weightNeighbour = dictionary.valueOf(optimalVertex)._1() + weight;
 
-                    V destination = successor.vertex();
-                    Integer weight = successor.weight();
+                        List<V> path = JDKArrayList.copyOf(dictionary.valueOf(optimalVertex)._2());
+                        path.append(destination);
 
-                    if (vertices.contains(destination)){
-                        priorityQueue.enqueue(new Extension<>(optimalVertex, destination, dictionary.valueOf(optimalVertex) + weight));
+                        queue.enqueue(Extension.of(optimalVertex, destination, weightNeighbour, path));
                     }
-                    // extract best extension
-                    var bestExtension = priorityQueue.first();
-
-                    var bestDestination = bestExtension.destination;
-                    var bestTotalCost = bestExtension.totalCost;
-
-                    dictionary.insert(bestDestination, bestTotalCost);
                 }
             }
 
+            Extension<V> bestExtension = queue.first();
+            queue.dequeue(); // optional as we create a new queue every time
+
+            V newOptimalVertex = bestExtension.destination();
+
+            dictionary.insert(newOptimalVertex, Tuple2.of(bestExtension.totalCost(), bestExtension.path()));
+
+            optimalVertices.insert(newOptimalVertex);
+            vertices.delete(newOptimalVertex);
         }
+
         return dictionary;
-        */
-        throw new RuntimeException("not finished yet");
     }
 
-
+    // !!!!!!!!!!!!!!!!!!!!!!!
+    // !!!!!!!!!!!!!!!!!!!!!!!
+    // !!!!!!!!!!!!!!!!!!!!!!!
+    // !!!!!!!!!!!!!!!!!!!!!!!
     // improvement : remove optimalVertices set as we can use a dictionary keys for get it
+    // !!!!!!!!!!!!!!!!!!!!!!!
+    // !!!!!!!!!!!!!!!!!!!!!!!
+    // !!!!!!!!!!!!!!!!!!!!!!!
+
 }
