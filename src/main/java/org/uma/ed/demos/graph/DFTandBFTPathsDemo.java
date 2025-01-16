@@ -1,10 +1,11 @@
 package org.uma.ed.demos.graph;
 
 import org.uma.ed.datastructures.graph.DFTPaths;
+import org.uma.ed.datastructures.graph.BFTPaths;
 import org.uma.ed.datastructures.graph.DictionaryGraph;
 import org.uma.ed.datastructures.graph.Graph;
 
-public class DFTPathsDemo {
+public class DFTandBFTPathsDemo { // MY CUSTOM CLASS
     public static void main(String[] args) {
 
         Graph<String> graph = DictionaryGraph.empty();
@@ -37,7 +38,7 @@ public class DFTPathsDemo {
 
         DFTPaths<String> dftPaths = new DFTPaths<>(graph, "A");
 
-        System.out.println("Traversal: ");
+        System.out.println("DF Traversal: --------------------------------");
         System.out.println(dftPaths.getTraversal());
         System.out.println("\n");
 
@@ -54,6 +55,13 @@ public class DFTPathsDemo {
         System.out.println("Path to B: ");
         System.out.println(dftPaths.pathTo("B"));
         System.out.println("\n");
+
+        BFTPaths<String> bftPaths = new BFTPaths<>(graph, "A");
+
+        System.out.println("BF Traversal: --------------------------------");
+        System.out.println(bftPaths.getTraversal());
+        System.out.println("\n");
+
     }
 
 }

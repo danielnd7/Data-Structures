@@ -10,7 +10,7 @@ import org.uma.ed.datastructures.stack.JDKStack;
 import org.uma.ed.datastructures.stack.Stack;
 
 
-public class DFTPaths<V> {
+public class DFTPaths<V> { // MY CUSTOM CLASS
     private final V source;                  // source of traversal
     private final Set<V> visited;            // already visited nodes
     private final List<V> traversal;         // traversal
