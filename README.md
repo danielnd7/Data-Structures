@@ -41,3 +41,6 @@ SeparateChainingHashTable
 DictionaryGraph
 
 Dijkstra
+
+DictionaryDiGraph
+
