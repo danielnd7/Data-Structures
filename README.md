@@ -39,3 +39,5 @@ LinearProbingHashTable
 SeparateChainingHashTable
 ## Graph:
 DictionaryGraph
+
+Dijkstra
